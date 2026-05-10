@@ -1,0 +1,32 @@
+name: Java CI mit Gradle
+
+on:
+  push:
+    branches: [ "main", "master" ] # Triggert bei jedem Push auf den Hauptbranch
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Code auschecken
+      uses: actions/checkout@v4
+
+    - name: Java JDK 21 installieren # Nutze die Java-Version deines Projekts
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Gradle-Wrapper ausführbar machen
+      run: chmod +x gradlew
+  
+    - name: Projekt bauen (Kompilieren)
+      run: ./gradlew assemble
+  
+    - name: JUnit-Tests ausführen
+      run: ./gradlew test
+
+    - name: Formatierung prüfen (Spotless)
+      run: ./gradlew spotlessCheck
